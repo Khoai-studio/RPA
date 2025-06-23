@@ -1,0 +1,576 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="vi"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Hướng dẫn Tự động hóa Phân việc RPA - Vietcombank&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Chosen Palette: Calm Harmony --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Application Structure Plan: The SPA is designed as an interactive guided journey. It starts with a high-level overview, then dives into an interactive comparison of the two main architectural choices (Hybrid vs. Desktop) which is the core of the user's decision-making. This is followed by a detailed, component-based exploration of the recommended Hybrid solution, and now includes a step-by-step build guide. The structure is thematic and task-oriented (Compare -&gt; Explore -&gt; Build), which is more intuitive for a newcomer than a linear report, facilitating better understanding and decision-making. --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Visualization &amp; Content Choices:<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>- Report Info: Architecture comparison (Hybrid vs. Desktop) -&gt; Goal: Compare -&gt; Viz/Method: Side-by-side layout with toggle buttons and a dynamic bar chart (Chart.js) -&gt; Interaction: User clicks toggle to see diagrams, pros/cons, and chart data update instantly -&gt; Justification: Enables direct, visual comparison of trade-offs.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- Report Info: The detailed process flow (subflows) -&gt; Goal: Understand -&gt; Viz/Method: An interactive, step-by-step process diagram built with HTML/Tailwind -&gt; Interaction: Clicking on a step reveals a card with details about that subflow -&gt; Justification: Deconstructs a complex process into digestible, self-contained modules.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- Report Info: Step-by-step build instructions for each subflow -&gt; Goal: Instruct -&gt; Viz/Method: A new tab with an accordion-style layout for each subflow -&gt; Interaction: User clicks on a subflow title to expand and see detailed build steps -&gt; Justification: Provides a clear, self-paced learning path for building the robot, making the technical guide accessible and less intimidating.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: 'Be Vietnam Pro', sans-serif; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab-button.active { border-color: #1e40af; color: #1e40af; background-color: #dbeafe; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.nav-tab.active { border-color: #2563eb; color: #1e3a8a; font-weight: 600; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.content-section { display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.content-section.active { display: block; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.flow-step { transition: all 0.3s ease-in-out; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.flow-step:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tooltip { visibility: hidden; opacity: 0; transition: opacity 0.3s; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.has-tooltip:hover .tooltip { visibility: visible; opacity: 1; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gray-50 text-gray-800"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container mx-auto p-4 md:p-8"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;header class="text-center mb-12"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-2"&gt;Tự động hóa Quy trình Phân việc&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-lg text-gray-600"&gt;Một hướng dẫn tương tác để xây dựng giải pháp RPA tại Vietcombank&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;main&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;nav class="flex justify-center border-b-2 border-gray-200 mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button data-target="so-sanh" class="nav-tab p-4 text-lg font-medium border-b-4 border-transparent hover:border-blue-500 hover:text-blue-600 transition-colors duration-300 active"&gt;So sánh Kiến trúc&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button data-target="giai-phap" class="nav-tab p-4 text-lg font-medium border-b-4 border-transparent hover:border-blue-500 hover:text-blue-600 transition-colors duration-300"&gt;Bản thiết kế Giải pháp&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button data-target="luong-chay" class="nav-tab p-4 text-lg font-medium border-b-4 border-transparent hover:border-blue-500 hover:text-blue-600 transition-colors duration-300"&gt;Luồng Hoạt động&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button data-target="huong-dan" class="nav-tab p-4 text-lg font-medium border-b-4 border-transparent hover:border-blue-500 hover:text-blue-600 transition-colors duration-300"&gt;Hướng dẫn Xây dựng&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/nav&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="so-sanh" class="main-content active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;section class="text-center mb-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-3xl font-bold text-gray-800 mb-2"&gt;Lựa chọn Con đường của bạn&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="max-w-3xl mx-auto text-gray-600"&gt;Mỗi dự án RPA bắt đầu với một quyết định quan trọng về kiến trúc. Lựa chọn đúng đắn sẽ quyết định độ tin cậy, khả năng mở rộng và hiệu quả của giải pháp. Hãy cùng so sánh hai phương án: một giải pháp "Lai" hiện đại và một giải pháp "Hoàn toàn trên Desktop" đơn giản hơn.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex justify-center mb-8 space-x-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="btn-hybrid" class="tab-button px-6 py-2 font-semibold border-2 rounded-full transition-all duration-300 active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Giải pháp Lai (Khuyến nghị)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="btn-desktop" class="tab-button px-6 py-2 font-semibold border-2 rounded-full transition-all duration-300"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Giải pháp Desktop</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="architecture-diagram" class="bg-white p-6 rounded-xl shadow-md border border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="architecture-details" class="bg-white p-6 rounded-xl shadow-md border border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mt-12 bg-white p-6 rounded-xl shadow-md border border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-2xl font-bold text-center mb-4 text-gray-800"&gt;So sánh trực quan&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="chart-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;canvas id="comparisonChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="giai-phap" class="main-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>&lt;section class="text-center mb-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-3xl font-bold text-gray-800 mb-2"&gt;Bản thiết kế Giải pháp Lai&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="max-w-3xl mx-auto text-gray-600"&gt;Đây là kiến trúc được khuyến nghị vì sự mạnh mẽ, tin cậy và khả năng mở rộng. Giải pháp này dựa trên 3 trụ cột dữ liệu được quản lý tập trung trên SharePoint, giúp robot hoạt động một cách thông minh và bền bỉ.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="grid grid-cols-1 lg:grid-cols-3 gap-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-white p-6 rounded-xl shadow-md border border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4 class="font-bold text-xl mb-3 text-blue-800"&gt;1. Danh sách Cấu hình&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-600 mb-4"&gt;Hoạt động như "bộ não" lưu trữ các tham số của robot (URL, đường dẫn tệp). Thay đổi cấu hình tại một nơi duy nhất mà không cần sửa code.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;table class="w-full text-sm text-left"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;thead class="bg-blue-50 text-blue-900"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="p-2 has-tooltip"&gt;Khóa&lt;div class="tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 mt-1 z-10"&gt;Tên của tham số&lt;/div&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="p-2 has-tooltip"&gt;Giá trị&lt;div class="tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 mt-1 z-10"&gt;Giá trị của tham số&lt;/div&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 font-mono"&gt;DashboardURL&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 font-mono text-gray-600"&gt;https://internal.vcb.com/dashboard&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 font-mono"&gt;MasterLedgerPath&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 font-mono text-gray-600"&gt;/sites/TTTM/Shared...&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;div class="bg-white p-6 rounded-xl shadow-md border border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4 class="font-bold text-xl mb-3 text-blue-800"&gt;2. Sổ cái Phân công Tổng&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-600 mb-4"&gt;Một file Excel duy nhất trên SharePoint làm "nguồn chân lý", ghi lại mọi hồ sơ được phân công, thời gian và trạng thái.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;table class="w-full text-sm text-left"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;thead class="bg-blue-50 text-blue-900"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="p-2 has-tooltip"&gt;CaseID&lt;div class="tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 mt-1 z-10"&gt;Mã định danh hồ sơ&lt;/div&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="p-2 has-tooltip"&gt;AssignedTo&lt;div class="tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 mt-1 z-10"&gt;Nhân viên được giao&lt;/div&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="p-2 has-tooltip"&gt;AssignedTimestamp&lt;div class="tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 mt-1 z-10"&gt;Thời gian giao việc&lt;/div&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 font-mono"&gt;HS-001&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;nhan.vien.a&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;23/06/2025 08:01&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                 </span>&lt;tr class="border-b"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 font-mono"&gt;HS-002&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;nhan.vien.b&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;23/06/2025 08:02&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;div class="bg-white p-6 rounded-xl shadow-md border border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4 class="font-bold text-xl mb-3 text-blue-800"&gt;3. Bộ theo dõi Xoay vòng&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-600 mb-4"&gt;Một danh sách SharePoint để quản lý việc chia việc công bằng. Robot sẽ luôn chọn người có "lượt" xa nhất để giao hồ sơ tiếp theo.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;table class="w-full text-sm text-left"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;thead class="bg-blue-50 text-blue-900"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="p-2 has-tooltip"&gt;EmployeeEmail&lt;div class="tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 mt-1 z-10"&gt;Email nhân viên&lt;/div&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="p-2 has-tooltip"&gt;LastAssignedDate&lt;div class="tooltip absolute bg-gray-800 text-white text-xs rounded py-1 px-2 mt-1 z-10"&gt;Lần cuối được giao việc&lt;/div&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                             </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;nhan.vien.b&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;23/06/2025 08:02&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;nhan.vien.a&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="p-2 text-gray-600"&gt;23/06/2025 08:01&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="luong-chay" class="main-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;section class="text-center mb-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-3xl font-bold text-gray-800 mb-2"&gt;Luồng Hoạt động của Robot&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="max-w-3xl mx-auto text-gray-600"&gt;Robot hoạt động theo một quy trình được module hóa, mỗi bước là một "subflow" chuyên biệt. Nhấp vào từng bước để xem chi tiết nhiệm vụ của nó.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="relative p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-blue-200 hidden md:block"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;div id="flow-steps-container" class="space-y-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="huong-dan" class="main-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;section class="text-center mb-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-3xl font-bold text-gray-800 mb-2"&gt;Hướng dẫn Xây dựng Từng bước&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="max-w-3xl mx-auto text-gray-600"&gt;Thực hiện theo các hướng dẫn dưới đây để xây dựng từng subflow (luồng phụ) cho robot của bạn. Nhấp vào mỗi tiêu đề để xem chi tiết các hành động cần thiết.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="build-guide-container" class="space-y-4 max-w-4xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/main&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;footer class="text-center mt-16 pt-8 border-t border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-gray-500"&gt;Được tạo ra để hỗ trợ Trung tâm Tài trợ Thương mại Vietcombank.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/footer&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const architectureData = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>hybrid: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>diagram: `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-2xl font-bold mb-4 text-center text-blue-900"&gt;Kiến trúc Lai (Hybrid)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-blue-100 p-3 rounded-lg text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold"&gt;1. Cloud Flow (Lên lịch)&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm text-gray-600"&gt;Tự động chạy mỗi sáng lúc 8:00&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex justify-center"&gt;&lt;div class="h-6 w-0.5 bg-blue-300"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-blue-100 p-3 rounded-lg text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold"&gt;2. Desktop Flow (Thực thi)&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm text-gray-600"&gt;Chạy trên máy chủ (không giám sát)&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex justify-center"&gt;&lt;div class="h-6 w-0.5 bg-blue-300"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="grid grid-cols-2 gap-2 text-center text-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;div class="bg-green-100 p-2 rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="font-semibold"&gt;Quét Dashboard&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;div class="bg-green-100 p-2 rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="font-semibold"&gt;Đọc/Ghi SharePoint&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;div class="flex justify-center"&gt;&lt;div class="h-6 w-0.5 bg-blue-300"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-purple-100 p-3 rounded-lg text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold"&gt;3. Thông báo qua Teams/Email&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                             </span>&lt;div class="text-sm text-gray-600"&gt;Gửi cảnh báo hồ sơ quan trọng&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>details: `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-2xl font-bold mb-4 text-blue-900"&gt;Ưu &amp; Nhược điểm&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h4 class="font-semibold text-green-700"&gt;Ưu điểm:&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;ul class="list-disc list-inside text-gray-700 space-y-1 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Tự động hóa hoàn toàn:&lt;/strong&gt; Chạy theo lịch trình mà không cần can thiệp.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Độ tin cậy cao:&lt;/strong&gt; Quản lý dữ liệu tập trung, an toàn trên SharePoint.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Khả năng mở rộng:&lt;/strong&gt; Dễ dàng thêm người dùng, thay đổi logic.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Thông báo hiệu quả:&lt;/strong&gt; Gửi cảnh báo trực tiếp qua Teams, email đến đúng người.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h4 class="font-semibold text-red-700"&gt;Nhược điểm:&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;ul class="list-disc list-inside text-gray-700 space-y-1 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Yêu cầu giấy phép:&lt;/strong&gt; Cần license Power Automate Process để chạy không giám sát.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Phức tạp hơn:&lt;/strong&gt; Đòi hỏi kiến thức về cả Cloud và Desktop flow.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>chartData: [9, 9, 8, 8, 5]<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>desktop: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>diagram: `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-2xl font-bold mb-4 text-center text-blue-900"&gt;Kiến trúc Desktop&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;div class="space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-gray-200 p-3 rounded-lg text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold"&gt;1. Kích hoạt thủ công&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm text-gray-600"&gt;Người dùng phải nhấn nút "Chạy"&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex justify-center"&gt;&lt;div class="h-6 w-0.5 bg-gray-400"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-gray-200 p-3 rounded-lg text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold"&gt;2. Desktop Flow (Thực thi)&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm text-gray-600"&gt;Chạy trên máy người dùng&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex justify-center"&gt;&lt;div class="h-6 w-0.5 bg-gray-400"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;div class="grid grid-cols-2 gap-2 text-center text-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;div class="bg-orange-100 p-2 rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="font-semibold"&gt;Quét Dashboard&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;div class="bg-orange-100 p-2 rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="font-semibold"&gt;Đọc/Ghi file Excel cục bộ&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex justify-center"&gt;&lt;div class="h-6 w-0.5 bg-gray-400"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-red-100 p-3 rounded-lg text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold"&gt;3. Thông báo Pop-up&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm text-gray-600"&gt;Chỉ hiển thị trên máy đang chạy robot&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>details: `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-2xl font-bold mb-4 text-blue-900"&gt;Ưu &amp; Nhược điểm&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h4 class="font-semibold text-green-700"&gt;Ưu điểm:&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;ul class="list-disc list-inside text-gray-700 space-y-1 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Đơn giản để bắt đầu:&lt;/strong&gt; Toàn bộ logic nằm trong một luồng duy nhất.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Chi phí thấp:&lt;/strong&gt; Không cần license premium cho chế độ có giám sát.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h4 class="font-semibold text-red-700"&gt;Nhược điểm:&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;ul class="list-disc list-inside text-gray-700 space-y-1 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Yêu cầu can thiệp:&lt;/strong&gt; Phải có người đăng nhập và khởi chạy thủ công.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Kém tin cậy:&lt;/strong&gt; Dễ lỗi nếu file cục bộ bị di chuyển, đổi tên.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Khó cộng tác:&lt;/strong&gt; Vấn đề "file riêng cho mỗi người" rất khó quản lý.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;li&gt;&lt;strong&gt;Thông báo hạn chế:&lt;/strong&gt; Pop-up chỉ hiện trên một máy, không thể báo cho người khác.&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>chartData: [4, 5, 3, 4, 8]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const flowStepsData = [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: "1. Khởi tạo &amp; Tải cấu hình",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>description: "Robot bắt đầu bằng việc đọc Danh sách Cấu hình trên SharePoint để lấy các thông tin quan trọng như URL của dashboard, đường dẫn file Excel. Giống như một người chuẩn bị công cụ trước khi làm việc."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: "2. Trích xuất Hồ sơ từ Dashboard",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>description: "Robot mở trình duyệt, tự động đăng nhập vào dashboard nội bộ và quét toàn bộ bảng dữ liệu các hồ sơ mới. Dữ liệu này được lưu vào một bảng tạm trong bộ nhớ."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: "3. Sắp xếp &amp; Ưu tiên Hồ sơ",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>description: "Dựa trên quy tắc nghiệp vụ, robot sắp xếp lại bảng dữ liệu vừa trích xuất để đảm bảo các hồ sơ của khách hàng 'Kim cương' được xử lý trước, sau đó đến 'Vàng' và 'Bạc'."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: "4. Thực thi Logic Phân việc Xoay vòng",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>description: "Với từng hồ sơ, robot kết nối đến danh sách 'Bộ theo dõi Xoay vòng' trên SharePoint, tìm ra nhân viên đã chờ lâu nhất, và gán hồ sơ cho họ. Sau đó, nó cập nhật lại thời gian cho nhân viên đó."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: "5. Ghi vào Sổ cái",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>description: "Sau khi xác định được người nhận, robot mở file Excel tổng trên SharePoint và ghi lại một dòng mới với đầy đủ thông tin: mã hồ sơ, người nhận, thời gian giao việc..."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: "6. Gửi Cảnh báo (nếu cần)",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>description: "Nếu hồ sơ vừa được giao thuộc hạng 'Kim cương', robot sẽ kích hoạt một thông báo đặc biệt, ví dụ như gửi tin nhắn qua Microsoft Teams đến trực tiếp nhân viên được giao việc."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const buildGuideData = [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Subflow 1: Khởi tạo &amp; Tải cấu hình",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>objective: "Đọc tất cả các tham số cấu hình cần thiết từ Danh sách Cấu hình SharePoint vào bộ nhớ khi bắt đầu luồng.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actions: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Sử dụng hành động &lt;strong&gt;SharePoint &gt; Get list items&lt;/strong&gt; để lấy các mục từ danh sách Cấu hình.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng vòng lặp &lt;strong&gt;For each&lt;/strong&gt; để duyệt qua các mục được trả về.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Bên trong vòng lặp, dùng điều kiện &lt;strong&gt;If&lt;/strong&gt; để kiểm tra cột 'Title' (ví dụ: `If CurrentItem['Title'] == 'DashboardURL'`).",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng hành động &lt;strong&gt;Set variable&lt;/strong&gt; để lưu giá trị vào một biến riêng biệt (ví dụ: `%Config_DashboardURL% = CurrentItem['Value']`)."</p>
+<p class="p1"><span class="Apple-converted-space">                </span>],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>highlight: "Subflow này tập trung tất cả các phụ thuộc bên ngoài. Nếu có lỗi, bạn biết ngay nơi để kiểm tra đầu tiên."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Subflow 2: Tự động hóa Web - Trích xuất Hồ sơ",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>objective: "Điều hướng đến dashboard nội bộ, đăng nhập nếu cần, và trích xuất bảng dữ liệu các hồ sơ mới.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actions: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Sử dụng &lt;strong&gt;Browser automation &gt; Launch new Chrome&lt;/strong&gt; với URL từ biến `%Config_DashboardURL%`.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Sử dụng các hành động &lt;strong&gt;Populate text field&lt;/strong&gt; và &lt;strong&gt;Click link&lt;/strong&gt; cho việc đăng nhập (nếu có).",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng hành động chính: &lt;strong&gt;Extract data from web page&lt;/strong&gt;. Dùng trình trợ giúp để chọn toàn bộ bảng dữ liệu. Kết quả sẽ được lưu vào một biến DataTable, ví dụ `%ExtractedCases%`."</p>
+<p class="p1"><span class="Apple-converted-space">                </span>],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>highlight: "Subflow này cô lập phần dễ thay đổi nhất là giao diện web. Nếu website thay đổi, bạn chỉ cần sửa ở đây."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Subflow 3: Xử lý Dữ liệu - Ưu tiên Hồ sơ",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>objective: "Sắp xếp DataTable `%ExtractedCases%` để ưu tiên hồ sơ Kim cương &gt; Vàng &gt; Bạc.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actions: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng &lt;strong&gt;Data Table &gt; Add new column&lt;/strong&gt; để thêm một cột mới tên là 'PriorityLevel' vào `%ExtractedCases%`.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng vòng lặp &lt;strong&gt;For each&lt;/strong&gt; để duyệt qua `%ExtractedCases%`.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Bên trong, dùng &lt;strong&gt;If/Else If&lt;/strong&gt; để kiểm tra cột 'ClientTier' và gán giá trị số: Kim cương=1, Vàng=2, Bạc=3.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng &lt;strong&gt;Data Table &gt; Update data table item&lt;/strong&gt; để ghi giá trị số này vào cột 'PriorityLevel'.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Cuối cùng, dùng &lt;strong&gt;Data Table &gt; Sort data table&lt;/strong&gt; để sắp xếp `%ExtractedCases%` dựa trên cột 'PriorityLevel'."</p>
+<p class="p1"><span class="Apple-converted-space">                </span>],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>highlight: "Việc chuyển đổi sang số giúp sắp xếp đáng tin cậy, tránh các lỗi sắp xếp văn bản thông thường."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Subflow 4: Cơ chế Phân công Xoay vòng",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>objective: "Với mỗi hồ sơ, tìm ra nhân viên phù hợp để giao việc dựa trên danh sách theo dõi trên SharePoint.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actions: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng &lt;strong&gt;SharePoint &gt; Get list items&lt;/strong&gt; từ danh sách 'Bộ theo dõi Phân việc Xoay vòng'.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Trong tham số nâng cao, đặt &lt;strong&gt;Order By&lt;/strong&gt; là `LastAssignedDate asc` (tăng dần) và &lt;strong&gt;Top Count&lt;/strong&gt; là `1`. Thao tác này sẽ trả về duy nhất nhân viên đã chờ lâu nhất.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Lưu email của người này vào một biến, ví dụ `%AssignedEmployeeEmail%`.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng &lt;strong&gt;SharePoint &gt; Update list item&lt;/strong&gt; để cập nhật `LastAssignedDate` của nhân viên đó thành thời gian hiện tại (`%CurrentDateTime%`)."</p>
+<p class="p1"><span class="Apple-converted-space">                </span>],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>highlight: "Logic này đảm bảo tính công bằng và bền bỉ, trạng thái phân việc được lưu lại ngay cả khi robot khởi động lại."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Subflow 5: Sổ cái - Ghi vào Tệp Excel Tổng",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>objective: "Ghi lại thông tin phân công vào file Excel tổng trên SharePoint.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actions: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng &lt;strong&gt;Excel &gt; Launch Excel&lt;/strong&gt; và mở tệp Sổ cái tổng. Sử dụng đường dẫn được đồng bộ qua OneDrive.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng &lt;strong&gt;Excel &gt; Get first free row on column&lt;/strong&gt; để tìm hàng trống tiếp theo.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng nhiều hành động &lt;strong&gt;Excel &gt; Write to Excel worksheet&lt;/strong&gt; để điền các thông tin (CaseID, AssignedTo, Timestamp...) vào các ô tương ứng của hàng đó.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Dùng &lt;strong&gt;Excel &gt; Close Excel&lt;/strong&gt; và chọn lưu lại tệp."</p>
+<p class="p1"><span class="Apple-converted-space">                </span>],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>highlight: "Đây là bước tạo ra dấu vết kiểm toán. Ghi vào tệp được đồng bộ qua OneDrive là cách tiếp cận đơn giản và hiệu quả."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>title: "Subflow 6: Người thông báo - Gửi Cảnh báo",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>objective: "Gửi thông báo nếu một hồ sơ có độ ưu tiên cao (Kim cương) được phân công.",</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actions: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"Subflow này được gọi bên trong một điều kiện &lt;strong&gt;If&lt;/strong&gt; (`If CurrentCase['ClientTier'] == 'Kim cương'`).",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"&lt;strong&gt;Lựa chọn A (Đơn giản):&lt;/strong&gt; Dùng &lt;strong&gt;Message boxes &gt; Display message&lt;/strong&gt; để hiện pop-up.",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>"&lt;strong&gt;Lựa chọn B (Nâng cao):&lt;/strong&gt; Gọi một Cloud Flow phụ, truyền các chi tiết hồ sơ. Cloud Flow này sẽ dùng trình kết nối &lt;strong&gt;Microsoft Teams &gt; Post adaptive card in a chat or channel&lt;/strong&gt; để gửi cảnh báo trực tiếp đến người nhận."</p>
+<p class="p1"><span class="Apple-converted-space">                </span>],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>highlight: "Thể hiện khả năng xử lý logic có điều kiện và cung cấp các tùy chọn thông báo từ cơ bản đến nâng cao."</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let myChart;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateArchitectureView(type) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('architecture-diagram').innerHTML = architectureData[type].diagram;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('architecture-details').innerHTML = architectureData[type].details;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('btn-hybrid').classList.toggle('active', type === 'hybrid');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('btn-desktop').classList.toggle('active', type === 'desktop');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>myChart.data.datasets[0].data = architectureData[type].chartData;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>myChart.update();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function setupTabs() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tabs = document.querySelectorAll('.nav-tab');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const contents = document.querySelectorAll('.main-content');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>tabs.forEach(tab =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tab.addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tabs.forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>item.classList.remove('active');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tab.classList.add('active');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const targetId = tab.dataset.target;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>contents.forEach(content =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>content.classList.toggle('active', content.id === targetId);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function createFlowSteps() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('flow-steps-container');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!container) return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flowStepsData.forEach((step, index) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isEven = index % 2 === 0;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const alignmentClass = isEven ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8 md:text-right';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const stepElement = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>stepElement.className = `md:w-1/2 ${alignmentClass}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>stepElement.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flow-step bg-white p-6 rounded-xl shadow-md border border-gray-200 cursor-pointer"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4 class="font-bold text-xl text-blue-800 mb-2"&gt;${step.name}&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-600 hidden"&gt;${step.description}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>container.appendChild(stepElement);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const stepDiv = stepElement.querySelector('.flow-step');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>stepDiv.addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                   </span>stepDiv.querySelector('p').classList.toggle('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function createBuildGuide() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('build-guide-container');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!container) return;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>buildGuideData.forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const accordionItem = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>accordionItem.className = 'border border-gray-200 rounded-lg overflow-hidden bg-white';</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>accordionItem.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="accordion-header w-full text-left p-4 flex justify-between items-center bg-gray-50 hover:bg-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="font-semibold text-lg text-blue-900"&gt;${item.title}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="accordion-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="p-6 border-t border-gray-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h5 class="font-semibold text-gray-800 mb-2"&gt;Mục tiêu:&lt;/h5&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;p class="text-gray-600 mb-4"&gt;${item.objective}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h5 class="font-semibold text-gray-800 mb-2"&gt;Các hành động chính:&lt;/h5&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;ul class="list-disc list-inside text-gray-600 space-y-2 mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>${item.actions.map(action =&gt; `&lt;li&gt;${action}&lt;/li&gt;`).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-r-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h5 class="font-semibold mb-1"&gt;Điểm nhấn:&lt;/h5&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p&gt;${item.highlight}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>container.appendChild(accordionItem);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>container.querySelectorAll('.accordion-header').forEach(button =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>button.addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const content = button.nextElementSibling;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const icon = button.querySelector('svg');</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (content.style.maxHeight) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>content.style.maxHeight = null;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>icon.style.transform = 'rotate(0deg)';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>content.style.maxHeight = content.scrollHeight + "px";</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>icon.style.transform = 'rotate(180deg)';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function createComparisonChart() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ctx = document.getElementById('comparisonChart').getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>myChart = new Chart(ctx, {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: 'bar',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: ['Tự động hóa', 'Độ tin cậy', 'Mở rộng', 'Thông báo', 'Đơn giản'],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>label: 'Đánh giá thang điểm 10',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>data: architectureData.hybrid.chartData,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>backgroundColor: 'rgba(30, 64, 175, 0.7)',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>borderColor: 'rgba(30, 64, 175, 1)',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>borderWidth: 1,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>borderRadius: 4</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>options: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>maintainAspectRatio: false,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>indexAxis: 'y',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>scales: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>x: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>beginAtZero: true,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>max: 10,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>grid: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>color: '#e5e7eb'</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>y: {</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>grid: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>display: false</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>plugins: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>legend: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>display: false</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>tooltip: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>backgroundColor: '#1f2937',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>titleFont: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>size: 14</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>bodyFont: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>size: 12</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setupTabs();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>createComparisonChart();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>createFlowSteps();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>createBuildGuide();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('btn-hybrid').addEventListener('click', () =&gt; updateArchitectureView('hybrid'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('btn-desktop').addEventListener('click', () =&gt; updateArchitectureView('desktop'));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateArchitectureView('hybrid');<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
